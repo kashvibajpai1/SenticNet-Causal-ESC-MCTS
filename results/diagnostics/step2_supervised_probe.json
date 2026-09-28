@@ -1,0 +1,20 @@
+{
+  "n_instances": 300,
+  "n_train": 240,
+  "n_test": 60,
+  "num_classes": 8,
+  "random_floor": 0.125,
+  "majority_floor": 0.23333333333333334,
+  "raw_probe_accuracy": 0.13333334028720856,
+  "projected_probe_accuracy": 0.1666666716337204,
+  "label_distribution": {
+    "Reflection": 46,
+    "Question": 47,
+    "Restatement": 19,
+    "Providing Suggestions": 42,
+    "Information": 20,
+    "Affirmation": 55,
+    "Others": 42,
+    "Self-disclosure": 29
+  }
+}

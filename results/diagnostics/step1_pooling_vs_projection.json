@@ -1,0 +1,42 @@
+{
+  "n_samples": 25,
+  "labels": [
+    "anxiety/job crisis",
+    "depression/ongoing depression",
+    "depression/breakup with partner",
+    "disgust/problems with friends",
+    "fear/ongoing depression",
+    "anxiety/academic pressure",
+    "anxiety/ongoing depression",
+    "fear/problems with friends",
+    "depression/job crisis",
+    "anxiety/conflict with parents",
+    "sadness/ongoing depression",
+    "fear/job crisis",
+    "shame/job crisis",
+    "sadness/problems with friends",
+    "anger/job crisis",
+    "anger/academic pressure",
+    "anxiety/problems with friends",
+    "anxiety/breakup with partner",
+    "sadness/Issues with Children",
+    "sadness/job crisis",
+    "anger/problems with friends",
+    "sadness/breakup with partner",
+    "anger/Sleep Problems",
+    "shame/Appearance Anxiety",
+    "anger/breakup with partner"
+  ],
+  "raw_hidden_dim": 896,
+  "proj_dim": 768,
+  "raw_pairwise_cosine": {
+    "mean": 0.6160383820533752,
+    "min": 0.05641657114028931,
+    "max": 1.0000001192092896
+  },
+  "proj_pairwise_cosine": {
+    "mean": 0.592230498790741,
+    "min": 0.00026081688702106476,
+    "max": 1.0000004768371582
+  }
+}

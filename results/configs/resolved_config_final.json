@@ -1,0 +1,26 @@
+{
+  "resolved_config": {
+    "device": "cpu",
+    "seed": 42,
+    "backbone_model_name": "Qwen/Qwen2.5-0.5B-Instruct",
+    "learningrate": 0.0001,
+    "batchsize": 16,
+    "maxsteps": 800,
+    "flowlossweight": 1.0,
+    "rankinglossweight": 1.0,
+    "policylossweight": 1.0,
+    "entropybonus": 0.01,
+    "gammamargin": 1.0,
+    "num_simulations": 30,
+    "max_horizon": 12,
+    "cpuct": 1.5
+  },
+  "git_commit": "e28283ce6a28d5a7d46ccce334ec990e2b8ffbaf (plus uncommitted whole-window + ReLU changes; rankinglossweight/cpuct reverted to pre-fix values 1.0/1.5)",
+  "state_dim": 1283,
+  "cpuct": 1.5,
+  "rankinglossweight": 1.0,
+  "eval_n_per_seed": 500,
+  "python_version": "3.14.0 (main, Oct  7 2025, 09:34:52) [Clang 17.0.0 (clang-1700.0.13.3)]",
+  "torch_version": "2.14.0",
+  "transformers_version": "5.17.0"
+}

@@ -1,0 +1,51 @@
+# FlowMCTS-ablation + shared MCTS training hyperparameters (flat key: value)
+# These are "reduced-but-real" values for an actual (non-smoke) CPU run.
+# NOT the old maxsteps=10 smoke test, and NOT an unverified paper-scale claim.
+# See results/README.md for the honest scope/sizing rationale.
+#
+# maxsteps / num_simulations, 2026-09-11 recalibration:
+# The task spec (causal_esc_mcts_fix_spec.md, Part A3) asks for
+# maxsteps 3000-5000 and num_simulations 30-50. Measured on this machine
+# (8GB RAM, CPU-only), a single causal_mcts train_step at num_simulations=40
+# takes ~2.77s (real MCTS search is a per-state Python loop -- it does NOT
+# scale for free the way the spec assumed; "more steps costs almost
+# nothing" turned out not to hold once actually measured). At the spec's
+# literal values the full run (preprocessing + 3-seed training + enlarged
+# eval from B1/B2) extrapolated to 30+ hours, which blew the requested
+# 3-4 hour budget. Per explicit user sign-off, scaled down to fit that
+# budget:
+#   num_simulations: kept IN the spec's 30-50 range (30, the floor) --
+#     this only changed from the pilot's 15, not scaled back down.
+#   maxsteps: 800, NOT 3000-5000 -- the actual budget-limiting knob.
+#     Still 2.67x the original pilot's maxsteps=300.
+# To run the literal full-scope spec version later: set maxsteps to
+# 3000-5000 and budget ~3.1 hours/seed x 3 seeds (~9.25h) for training
+# alone at num_simulations=40, plus preprocessing (~70min, unchanged) and
+# a much larger eval set (see eval/run_eval.py --n; B1's fix surfaces
+# ~13.8 eligible instances/test-conversation, so "most/all of the test
+# split" is ~2,700 instances, not 40 -- budget accordingly, likely
+# another ~20h across 3 systems x 3 seeds at ~3s/instance).
+learningrate: 1e-4
+batchsize: 16
+maxsteps: 800
+flowlossweight: 1.0
+# 2026-09-24: setting this to 0.0 removes the batch-uniform gradient that
+# causes the value head's near-ceiling collapse (see models/value.py), and
+# does raise Pearson r (value vs reward) from ~0.4-0.7 to 0.66-0.78 -- but it
+# made causal_mcts strategy accuracy significantly WORSE (12.07% mean vs
+# random_floor's 14.27%, p=0.0218), not better. Reverted to 1.0, which
+# reproduces the original 16.67%-mean-accuracy result (McNemar pooled
+# p=0.0524, borderline). Kept at 1.0 despite the value head still showing
+# collapsed-looking output under this setting -- see INVESTIGATION.md.
+rankinglossweight: 1.0
+policylossweight: 1.0
+entropybonus: 0.01
+gammamargin: 1.0
+num_simulations: 30
+max_horizon: 12
+# 2026-09-24: lowering this (to rebalance PUCT's exploration term against Q)
+# was tried at 0.5 (13.87% mean accuracy, null vs random p=0.678) and 0.3
+# (seed42 regressed further to 10.4%, opposite of the intended direction;
+# run abandoned mid-training before seeds 43/44 completed). 1.5 reproduces
+# the best measured result of any config tried. See INVESTIGATION.md.
+cpuct: 1.5

@@ -1,0 +1,35 @@
+{
+  "seed": 42,
+  "checkpoint": "/Users/kashvibajpai/Projects/causal-esc-mcts-fix/checkpoints/causal_mcts/seed42",
+  "c_puct": 0.5,
+  "num_simulations": 30,
+  "n_states_sampled": 40,
+  "n_select_child_calls": 16674,
+  "value_output_stats": {
+    "min": 0.579425573348999,
+    "mean": 0.6519670963287354,
+    "max": 0.744633674621582,
+    "std": 0.0318487537544263
+  },
+  "Q_stats": {
+    "min": 0.0,
+    "mean": 0.03488888023857327,
+    "max": 0.6810927391052246,
+    "std": 0.14051798928940692
+  },
+  "exploration_term_stats": {
+    "min": 0.0006492402171716094,
+    "mean": 0.07448027521005923,
+    "max": 0.6208065272904775,
+    "std": 0.09519257767316343
+  },
+  "puct_stats": {
+    "min": 0.0006492402171716094,
+    "mean": 0.1093691554486325,
+    "max": 0.8951251386644588,
+    "std": 0.16298197964100608
+  },
+  "ratio_exploration_over_Q": 2.1347854875466474,
+  "max_depth_seen": 29,
+  "mean_candidates_per_call": 16
+}

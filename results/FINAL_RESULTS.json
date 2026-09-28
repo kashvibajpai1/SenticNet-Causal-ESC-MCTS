@@ -1,0 +1,48 @@
+{
+  "config": {
+    "value_network_activation": "relu",
+    "rankinglossweight": 1.0,
+    "cpuct": 1.5,
+    "num_simulations": 30,
+    "maxsteps": 800,
+    "eval_n_per_seed": 500,
+    "seeds": [42, 43, 44]
+  },
+  "accuracy": {
+    "causal_mcts": {
+      "mean": 0.1667,
+      "per_seed": {"42": 0.156, "43": 0.188, "44": 0.156}
+    },
+    "random_floor": {
+      "mean": 0.1427,
+      "per_seed": {"42": 0.152, "43": 0.13, "44": 0.146}
+    }
+  },
+  "significance_causal_mcts_vs_random_floor": {
+    "primary": {
+      "test": "mcnemar_pooled",
+      "p_value": 0.0524,
+      "note": "borderline -- just above the conventional p<0.05 threshold, not a clean significant win",
+      "b_discordant": 181,
+      "c_discordant": 145,
+      "n_discordant": 326
+    },
+    "mcnemar_per_seed_p": {"42": 0.9204, "43": 0.0100, "44": 0.6992},
+    "secondary": {
+      "pooled_paired_bootstrap_p": 0.0488,
+      "seed_level_paired_ttest_p": 0.2953,
+      "seed_level_paired_ttest_note": "n=3 seeds, very low statistical power regardless of true effect size",
+      "old_seed42_only_bootstrap_p": 0.886,
+      "old_test_note": "superseded -- eval/significance.py previously tested seed42 alone and mislabeled it as an aggregate result"
+    }
+  },
+  "latency": {
+    "speedup": 40.2,
+    "learned_transition_seconds": 0.1598,
+    "llm_rollout_proxy_seconds": 6.4326
+  },
+  "value_network_pearson_r_vs_reward": {
+    "final_run_per_seed": {"42": 0.5698, "43": 0.3924, "44": 0.7304},
+    "note": "measured on this shipped config's own fresh training run (rankinglossweight=1.0); value outputs remain collapsed toward a high ceiling (mean 0.93-0.99, std ~0.01-0.05) despite this discriminative signal -- see models/value.py docstring and INVESTIGATION.md"
+  }
+}

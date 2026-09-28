@@ -1,0 +1,48 @@
+{
+  "n_instances": 2500,
+  "n_train": 800,
+  "n_test": 1700,
+  "majority_floor": 0.17294117647058824,
+  "majority_class": "Others",
+  "results": {
+    "select": {
+      "accuracy": 0.19235293567180634,
+      "gap": 0.0194117592012181,
+      "mcnemar": {
+        "b": 197,
+        "c": 230,
+        "n_discordant": 427,
+        "p_value": 0.12137904301200834
+      },
+      "bootstrap": {
+        "mean_diff": 0.019411765038967133,
+        "ci_lo": -0.00411764705882353,
+        "ci_hi": 0.04352941176470588,
+        "bootstrap_p": 0.1154
+      }
+    },
+    "whole_window": {
+      "accuracy": 0.20764705538749695,
+      "gap": 0.03470587891690871,
+      "mcnemar": {
+        "b": 186,
+        "c": 245,
+        "n_discordant": 431,
+        "p_value": 0.005150596819478535
+      },
+      "bootstrap": {
+        "mean_diff": 0.03470588102936745,
+        "ci_lo": 0.010588235294117647,
+        "ci_hi": 0.058823529411764705,
+        "bootstrap_p": 0.0054
+      }
+    }
+  },
+  "head_to_head_mcnemar": {
+    "b": 195,
+    "c": 221,
+    "n_discordant": 416,
+    "p_value": 0.22025564257724922
+  },
+  "total_wall_seconds": 5630.01574545796
+}

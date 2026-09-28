@@ -1,0 +1,20 @@
+# Core training + offline HF preprocessing (ESConv)
+torch>=2.0
+transformers>=4.36
+numpy>=1.24
+datasets>=2.16
+pandas>=2.0
+pyarrow>=14.0
+tqdm>=4.66
+pytest>=7.4
+
+# Evaluation metrics (BLEU / ROUGE / BERTScore / significance testing)
+sacrebleu>=2.4
+rouge-score>=0.1.2
+bert-score>=0.3.13
+scipy>=1.11
+
+# Part C: LLM-as-judge (eval/llm_judge.py). Only imported when
+# ANTHROPIC_API_KEY is set; the pure logic (prompt building, parsing,
+# bias-flip mapping) is tested without it.
+anthropic>=0.39

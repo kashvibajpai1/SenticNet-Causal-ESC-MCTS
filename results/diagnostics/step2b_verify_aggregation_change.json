@@ -1,0 +1,8 @@
+{
+  "max_abs_feature_diff": 22.271881103515625,
+  "features_identical": false,
+  "old_mean_probe_accuracy": 0.21666666865348816,
+  "new_selection_probe_accuracy": 0.21666666865348816,
+  "majority_floor": 0.23333333333333334,
+  "predictions_identical": false
+}

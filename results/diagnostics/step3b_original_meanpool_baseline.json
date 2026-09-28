@@ -1,0 +1,24 @@
+{
+  "n_instances": 2500,
+  "n_train": 800,
+  "n_test": 1700,
+  "majority_floor": 0.17294117647058824,
+  "majority_class": "Others",
+  "original_meanpool": {
+    "accuracy": 0.2011764645576477,
+    "gap": 0.028235288087059468,
+    "mcnemar": {
+      "b": 188,
+      "c": 236,
+      "n_discordant": 424,
+      "p_value": 0.022346981807685733
+    },
+    "bootstrap": {
+      "mean_diff": 0.028235293924808502,
+      "ci_lo": 0.004705882352941176,
+      "ci_hi": 0.05176470588235294,
+      "bootstrap_p": 0.0202
+    }
+  },
+  "total_wall_seconds": 3894.3838772920426
+}

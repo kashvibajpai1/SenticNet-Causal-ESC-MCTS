@@ -1,0 +1,68 @@
+{
+  "n_instances": 1000,
+  "n_train": 800,
+  "n_test": 200,
+  "num_classes": 8,
+  "random_floor": 0.125,
+  "majority_floor": 0.205,
+  "results": {
+    "select": {
+      "probe_accuracy": 0.22499999403953552,
+      "dim": 1283,
+      "cosine": {
+        "mean": 0.8938625454902649,
+        "min": 0.43309059739112854,
+        "max": 0.9811167120933533
+      },
+      "classifier_params": 10272,
+      "needs_ongoing_training": false
+    },
+    "concatenate": {
+      "probe_accuracy": 0.20000000298023224,
+      "dim": 5507,
+      "cosine": {
+        "mean": 0.8338779807090759,
+        "min": 0.2022990584373474,
+        "max": 0.964179277420044
+      },
+      "classifier_params": 44064,
+      "needs_ongoing_training": false
+    },
+    "max_pool": {
+      "probe_accuracy": 0.20999999344348907,
+      "dim": 1283,
+      "cosine": {
+        "mean": 0.8943500518798828,
+        "min": 0.4577890634536743,
+        "max": 0.9976217746734619
+      },
+      "classifier_params": 10272,
+      "needs_ongoing_training": false
+    },
+    "whole_window": {
+      "probe_accuracy": 0.22499999403953552,
+      "dim": 1283,
+      "cosine": {
+        "mean": 0.9397616982460022,
+        "min": 0.6374605894088745,
+        "max": 0.9987924098968506
+      },
+      "classifier_params": 10272,
+      "needs_ongoing_training": false
+    },
+    "attention_pool": {
+      "probe_accuracy": 0.1550000011920929,
+      "dim": 1283,
+      "cosine": {
+        "mean": 0.9183538556098938,
+        "min": 0.17893849313259125,
+        "max": 0.999613881111145
+      },
+      "total_params": 11424,
+      "extra_params_vs_others": 1152,
+      "training_epochs": 300,
+      "needs_ongoing_training": true
+    }
+  },
+  "total_wall_seconds": 2141.6200109589845
+}

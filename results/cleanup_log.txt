@@ -1,0 +1,24 @@
+HF cache dir: /Users/kashvibajpai/.cache/huggingface/hub
+Total hub cache size BEFORE cleanup: 2.4GB
+Removing /Users/kashvibajpai/.cache/huggingface/hub/models--Qwen--Qwen2.5-0.5B-Instruct (1.9GB)
+Removing /Users/kashvibajpai/.cache/huggingface/hub/models--distilbert-base-uncased (512.4MB)
+Removed lock dir /Users/kashvibajpai/.cache/huggingface/hub/.locks/models--Qwen--Qwen2.5-0.5B-Instruct
+Removed lock dir /Users/kashvibajpai/.cache/huggingface/hub/.locks/models--distilbert-base-uncased
+Total hub cache size AFTER cleanup: 11.0MB
+Reclaimed: 2.4GB
+
+Remaining hub cache entries (should be unrelated pre-existing data):
+  - CACHEDIR.TAG
+  - datasets--thu-coai--esconv
+
+Removed entries (JSON):
+[
+  {
+    "path": "/Users/kashvibajpai/.cache/huggingface/hub/models--Qwen--Qwen2.5-0.5B-Instruct",
+    "size_bytes": 1999172734
+  },
+  {
+    "path": "/Users/kashvibajpai/.cache/huggingface/hub/models--distilbert-base-uncased",
+    "size_bytes": 537305778
+  }
+]

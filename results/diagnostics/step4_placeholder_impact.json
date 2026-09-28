@@ -1,0 +1,547 @@
+[
+  {
+    "root_idx": 0,
+    "phase": 2,
+    "root_value": 0.99992835521698,
+    "n_candidates": 16,
+    "child_value_mean": 0.9999274611473083,
+    "child_value_std": 0.0,
+    "child_value_min": 0.9999274611473083,
+    "child_value_max": 0.9999274611473083,
+    "child_value_range": 0.0,
+    "children": [
+      {
+        "strategy": "Affirmation",
+        "cause_index": 0,
+        "child_value": 0.9999274611473083,
+        "reward": 0.6557785616722424
+      },
+      {
+        "strategy": "Affirmation",
+        "cause_index": 1,
+        "child_value": 0.9999274611473083,
+        "reward": 0.6549803514115364
+      },
+      {
+        "strategy": "Affirmation",
+        "cause_index": 2,
+        "child_value": 0.9999274611473083,
+        "reward": 0.6548450842928805
+      },
+      {
+        "strategy": "Affirmation",
+        "cause_index": 3,
+        "child_value": 0.9999274611473083,
+        "reward": 0.6556700105984489
+      },
+      {
+        "strategy": "Providing Suggestions",
+        "cause_index": 0,
+        "child_value": 0.9999274611473083,
+        "reward": 0.6562353907894938
+      },
+      {
+        "strategy": "Providing Suggestions",
+        "cause_index": 1,
+        "child_value": 0.9999274611473083,
+        "reward": 0.6554369651199247
+      },
+      {
+        "strategy": "Providing Suggestions",
+        "cause_index": 2,
+        "child_value": 0.9999274611473083,
+        "reward": 0.6553079221625502
+      },
+      {
+        "strategy": "Providing Suggestions",
+        "cause_index": 3,
+        "child_value": 0.9999274611473083,
+        "reward": 0.6561272471603228
+      },
+      {
+        "strategy": "Information",
+        "cause_index": 0,
+        "child_value": 0.9999274611473083,
+        "reward": 0.6562100255084657
+      },
+      {
+        "strategy": "Information",
+        "cause_index": 1,
+        "child_value": 0.9999274611473083,
+        "reward": 0.6554234679558133
+      },
+      {
+        "strategy": "Information",
+        "cause_index": 2,
+        "child_value": 0.9999274611473083,
+        "reward": 0.6552649053465441
+      },
+      {
+        "strategy": "Information",
+        "cause_index": 3,
+        "child_value": 0.9999274611473083,
+        "reward": 0.6561299147608222
+      },
+      {
+        "strategy": "Others",
+        "cause_index": 0,
+        "child_value": 0.9999274611473083,
+        "reward": 0.6557303308904496
+      },
+      {
+        "strategy": "Others",
+        "cause_index": 1,
+        "child_value": 0.9999274611473083,
+        "reward": 0.654932932523704
+      },
+      {
+        "strategy": "Others",
+        "cause_index": 2,
+        "child_value": 0.9999274611473083,
+        "reward": 0.6547980630617795
+      },
+      {
+        "strategy": "Others",
+        "cause_index": 3,
+        "child_value": 0.9999274611473083,
+        "reward": 0.6556226683344082
+      }
+    ]
+  },
+  {
+    "root_idx": 227,
+    "phase": 1,
+    "root_value": 0.9999271631240845,
+    "n_candidates": 16,
+    "child_value_mean": 0.9999280571937561,
+    "child_value_std": 0.0,
+    "child_value_min": 0.9999280571937561,
+    "child_value_max": 0.9999280571937561,
+    "child_value_range": 0.0,
+    "children": [
+      {
+        "strategy": "Reflection",
+        "cause_index": 0,
+        "child_value": 0.9999280571937561,
+        "reward": 0.6671915098757455
+      },
+      {
+        "strategy": "Reflection",
+        "cause_index": 1,
+        "child_value": 0.9999280571937561,
+        "reward": 0.6662637745764128
+      },
+      {
+        "strategy": "Reflection",
+        "cause_index": 2,
+        "child_value": 0.9999280571937561,
+        "reward": 0.666460797372471
+      },
+      {
+        "strategy": "Reflection",
+        "cause_index": 3,
+        "child_value": 0.9999280571937561,
+        "reward": 0.6670160116904306
+      },
+      {
+        "strategy": "Self-disclosure",
+        "cause_index": 0,
+        "child_value": 0.9999280571937561,
+        "reward": 0.6673839885292352
+      },
+      {
+        "strategy": "Self-disclosure",
+        "cause_index": 1,
+        "child_value": 0.9999280571937561,
+        "reward": 0.6664768733664486
+      },
+      {
+        "strategy": "Self-disclosure",
+        "cause_index": 2,
+        "child_value": 0.9999280571937561,
+        "reward": 0.6666155219730738
+      },
+      {
+        "strategy": "Self-disclosure",
+        "cause_index": 3,
+        "child_value": 0.9999280571937561,
+        "reward": 0.6672116962868242
+      },
+      {
+        "strategy": "Affirmation",
+        "cause_index": 0,
+        "child_value": 0.9999280571937561,
+        "reward": 0.6669078038617751
+      },
+      {
+        "strategy": "Affirmation",
+        "cause_index": 1,
+        "child_value": 0.9999280571937561,
+        "reward": 0.666000829150476
+      },
+      {
+        "strategy": "Affirmation",
+        "cause_index": 2,
+        "child_value": 0.9999280571937561,
+        "reward": 0.6661852082295395
+      },
+      {
+        "strategy": "Affirmation",
+        "cause_index": 3,
+        "child_value": 0.9999280571937561,
+        "reward": 0.6667310902104608
+      },
+      {
+        "strategy": "Others",
+        "cause_index": 0,
+        "child_value": 0.9999280571937561,
+        "reward": 0.6666873283964768
+      },
+      {
+        "strategy": "Others",
+        "cause_index": 1,
+        "child_value": 0.9999280571937561,
+        "reward": 0.665787487092498
+      },
+      {
+        "strategy": "Others",
+        "cause_index": 2,
+        "child_value": 0.9999280571937561,
+        "reward": 0.6659685159304272
+      },
+      {
+        "strategy": "Others",
+        "cause_index": 3,
+        "child_value": 0.9999280571937561,
+        "reward": 0.6665115156074407
+      }
+    ]
+  },
+  {
+    "root_idx": 454,
+    "phase": 2,
+    "root_value": 0.9999294281005859,
+    "n_candidates": 16,
+    "child_value_mean": 0.9999279379844666,
+    "child_value_std": 0.0,
+    "child_value_min": 0.9999279379844666,
+    "child_value_max": 0.9999279379844666,
+    "child_value_range": 0.0,
+    "children": [
+      {
+        "strategy": "Affirmation",
+        "cause_index": 0,
+        "child_value": 0.9999279379844666,
+        "reward": 0.5724446639434014
+      },
+      {
+        "strategy": "Affirmation",
+        "cause_index": 1,
+        "child_value": 0.9999279379844666,
+        "reward": 0.5718022896843937
+      },
+      {
+        "strategy": "Affirmation",
+        "cause_index": 2,
+        "child_value": 0.9999279379844666,
+        "reward": 0.5718767649741852
+      },
+      {
+        "strategy": "Affirmation",
+        "cause_index": 3,
+        "child_value": 0.9999279379844666,
+        "reward": 0.5720684970863422
+      },
+      {
+        "strategy": "Providing Suggestions",
+        "cause_index": 0,
+        "child_value": 0.9999279379844666,
+        "reward": 0.5732702584933158
+      },
+      {
+        "strategy": "Providing Suggestions",
+        "cause_index": 1,
+        "child_value": 0.9999279379844666,
+        "reward": 0.5726352826543808
+      },
+      {
+        "strategy": "Providing Suggestions",
+        "cause_index": 2,
+        "child_value": 0.9999279379844666,
+        "reward": 0.572693640665465
+      },
+      {
+        "strategy": "Providing Suggestions",
+        "cause_index": 3,
+        "child_value": 0.9999279379844666,
+        "reward": 0.5728943891455693
+      },
+      {
+        "strategy": "Information",
+        "cause_index": 0,
+        "child_value": 0.9999279379844666,
+        "reward": 0.5733290045169844
+      },
+      {
+        "strategy": "Information",
+        "cause_index": 1,
+        "child_value": 0.9999279379844666,
+        "reward": 0.572622735807535
+      },
+      {
+        "strategy": "Information",
+        "cause_index": 2,
+        "child_value": 0.9999279379844666,
+        "reward": 0.5728400689189201
+      },
+      {
+        "strategy": "Information",
+        "cause_index": 3,
+        "child_value": 0.9999279379844666,
+        "reward": 0.5728826582910522
+      },
+      {
+        "strategy": "Others",
+        "cause_index": 0,
+        "child_value": 0.9999279379844666,
+        "reward": 0.5722872125178438
+      },
+      {
+        "strategy": "Others",
+        "cause_index": 1,
+        "child_value": 0.9999279379844666,
+        "reward": 0.571651838871654
+      },
+      {
+        "strategy": "Others",
+        "cause_index": 2,
+        "child_value": 0.9999279379844666,
+        "reward": 0.5717695577075379
+      },
+      {
+        "strategy": "Others",
+        "cause_index": 3,
+        "child_value": 0.9999279379844666,
+        "reward": 0.5719103301792623
+      }
+    ]
+  },
+  {
+    "root_idx": 681,
+    "phase": 2,
+    "root_value": 0.9999268054962158,
+    "n_candidates": 16,
+    "child_value_mean": 0.9999254941940308,
+    "child_value_std": 0.0,
+    "child_value_min": 0.9999254941940308,
+    "child_value_max": 0.9999254941940308,
+    "child_value_range": 0.0,
+    "children": [
+      {
+        "strategy": "Affirmation",
+        "cause_index": 0,
+        "child_value": 0.9999254941940308,
+        "reward": 0.6490028956166127
+      },
+      {
+        "strategy": "Affirmation",
+        "cause_index": 1,
+        "child_value": 0.9999254941940308,
+        "reward": 0.6488601856602672
+      },
+      {
+        "strategy": "Affirmation",
+        "cause_index": 2,
+        "child_value": 0.9999254941940308,
+        "reward": 0.6486442107955976
+      },
+      {
+        "strategy": "Affirmation",
+        "cause_index": 3,
+        "child_value": 0.9999254941940308,
+        "reward": 0.6485722513335948
+      },
+      {
+        "strategy": "Providing Suggestions",
+        "cause_index": 0,
+        "child_value": 0.9999254941940308,
+        "reward": 0.6501125577820517
+      },
+      {
+        "strategy": "Providing Suggestions",
+        "cause_index": 1,
+        "child_value": 0.9999254941940308,
+        "reward": 0.6499659985762356
+      },
+      {
+        "strategy": "Providing Suggestions",
+        "cause_index": 2,
+        "child_value": 0.9999254941940308,
+        "reward": 0.649751510469013
+      },
+      {
+        "strategy": "Providing Suggestions",
+        "cause_index": 3,
+        "child_value": 0.9999254941940308,
+        "reward": 0.6496795833659677
+      },
+      {
+        "strategy": "Information",
+        "cause_index": 0,
+        "child_value": 0.9999254941940308,
+        "reward": 0.6495858528407109
+      },
+      {
+        "strategy": "Information",
+        "cause_index": 1,
+        "child_value": 0.9999254941940308,
+        "reward": 0.6494435937917844
+      },
+      {
+        "strategy": "Information",
+        "cause_index": 2,
+        "child_value": 0.9999254941940308,
+        "reward": 0.649226865321851
+      },
+      {
+        "strategy": "Information",
+        "cause_index": 3,
+        "child_value": 0.9999254941940308,
+        "reward": 0.649155520241391
+      },
+      {
+        "strategy": "Others",
+        "cause_index": 0,
+        "child_value": 0.9999254941940308,
+        "reward": 0.6487697365239988
+      },
+      {
+        "strategy": "Others",
+        "cause_index": 1,
+        "child_value": 0.9999254941940308,
+        "reward": 0.6486273568874931
+      },
+      {
+        "strategy": "Others",
+        "cause_index": 2,
+        "child_value": 0.9999254941940308,
+        "reward": 0.6484057238175411
+      },
+      {
+        "strategy": "Others",
+        "cause_index": 3,
+        "child_value": 0.9999254941940308,
+        "reward": 0.6483334740022197
+      }
+    ]
+  },
+  {
+    "root_idx": 909,
+    "phase": 2,
+    "root_value": 0.9999293684959412,
+    "n_candidates": 16,
+    "child_value_mean": 0.9999294281005859,
+    "child_value_std": 0.0,
+    "child_value_min": 0.9999294281005859,
+    "child_value_max": 0.9999294281005859,
+    "child_value_range": 0.0,
+    "children": [
+      {
+        "strategy": "Affirmation",
+        "cause_index": 0,
+        "child_value": 0.9999294281005859,
+        "reward": 0.6417793303651849
+      },
+      {
+        "strategy": "Affirmation",
+        "cause_index": 1,
+        "child_value": 0.9999294281005859,
+        "reward": 0.6416491501955177
+      },
+      {
+        "strategy": "Affirmation",
+        "cause_index": 2,
+        "child_value": 0.9999294281005859,
+        "reward": 0.641448808050811
+      },
+      {
+        "strategy": "Affirmation",
+        "cause_index": 3,
+        "child_value": 0.9999294281005859,
+        "reward": 0.6413966569302363
+      },
+      {
+        "strategy": "Providing Suggestions",
+        "cause_index": 0,
+        "child_value": 0.9999294281005859,
+        "reward": 0.6428402127709583
+      },
+      {
+        "strategy": "Providing Suggestions",
+        "cause_index": 1,
+        "child_value": 0.9999294281005859,
+        "reward": 0.6426817542075317
+      },
+      {
+        "strategy": "Providing Suggestions",
+        "cause_index": 2,
+        "child_value": 0.9999294281005859,
+        "reward": 0.6424720631194489
+      },
+      {
+        "strategy": "Providing Suggestions",
+        "cause_index": 3,
+        "child_value": 0.9999294281005859,
+        "reward": 0.6424582971772448
+      },
+      {
+        "strategy": "Information",
+        "cause_index": 0,
+        "child_value": 0.9999294281005859,
+        "reward": 0.6424619591621592
+      },
+      {
+        "strategy": "Information",
+        "cause_index": 1,
+        "child_value": 0.9999294281005859,
+        "reward": 0.6423006363676342
+      },
+      {
+        "strategy": "Information",
+        "cause_index": 2,
+        "child_value": 0.9999294281005859,
+        "reward": 0.6420889122171489
+      },
+      {
+        "strategy": "Information",
+        "cause_index": 3,
+        "child_value": 0.9999294281005859,
+        "reward": 0.6420758439976243
+      },
+      {
+        "strategy": "Others",
+        "cause_index": 0,
+        "child_value": 0.9999294281005859,
+        "reward": 0.6417091744705177
+      },
+      {
+        "strategy": "Others",
+        "cause_index": 1,
+        "child_value": 0.9999294281005859,
+        "reward": 0.6415412533816068
+      },
+      {
+        "strategy": "Others",
+        "cause_index": 2,
+        "child_value": 0.9999294281005859,
+        "reward": 0.6413292197406704
+      },
+      {
+        "strategy": "Others",
+        "cause_index": 3,
+        "child_value": 0.9999294281005859,
+        "reward": 0.6413159552494151
+      }
+    ]
+  }
+]
