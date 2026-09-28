@@ -23,6 +23,15 @@ import torch
 from esc.state import ESCState
 from esc.action import ESCAction
 
+# --- TEMPORARY DIAGNOSTIC LOGGING (2026-09-21, PUCT exploration-collapse
+# investigation) --- Off by default (no-op, zero overhead) so training/eval
+# runs are unaffected. Set PUCT_DEBUG = True from a diagnostic script to
+# record every select_child() decision to PUCT_DEBUG_LOG. Remove this block
+# (and the two guarded blocks inside select_child) once the investigation
+# concludes.
+PUCT_DEBUG: bool = False
+PUCT_DEBUG_LOG: list[dict] = []
+
 
 class TreeNode:
     """
@@ -165,16 +174,40 @@ class TreeNode:
         best_action: Optional[ESCAction] = None
         best_child: Optional[TreeNode] = None
         best_value: float = -float("inf")
+        _candidates: list[dict] = [] if PUCT_DEBUG else None  # type: ignore[assignment]
 
         for action, child in self.children.items():
             u = c_puct * child.P * sqrt_n_parent / (1.0 + child.N)
             puct = child.Q + u
+            if PUCT_DEBUG:
+                _candidates.append(
+                    {
+                        "action": repr(action),
+                        "Q": child.Q,
+                        "exploration_term": u,
+                        "puct": puct,
+                        "child_N": child.N,
+                        "child_P": child.P,
+                    }
+                )
             if puct > best_value:
                 best_value = puct
                 best_action = action
                 best_child = child
 
         assert best_action is not None
+
+        if PUCT_DEBUG:
+            PUCT_DEBUG_LOG.append(
+                {
+                    "depth": self.depth,
+                    "parent_N": self.N,
+                    "c_puct": c_puct,
+                    "candidates": _candidates,
+                    "selected_action": repr(best_action),
+                }
+            )
+
         return best_action, best_child  # type: ignore[return-value]
 
     def update(self, value: float) -> None:

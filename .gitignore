@@ -20,6 +20,8 @@ dist/
 .ruff_cache/
 
 checkpoints/
+checkpoints_backup_*/
+checkpoints_relu_500instance_config/
 runs/
 logs/
 output/

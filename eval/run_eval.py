@@ -116,7 +116,7 @@ def main() -> None:
         "--system", required=True, choices=["causal_mcts", "flow_ablation", "random_floor"]
     )
     parser.add_argument("--seed", type=int, required=True)
-    parser.add_argument("--n", type=int, default=40)
+    parser.add_argument("--n", type=int, default=500)
     args = parser.parse_args()
 
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

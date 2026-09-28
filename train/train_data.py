@@ -16,22 +16,36 @@ __all__ = ["ESCStateBundleDataset", "ESCStateTensorDataset"]
 
 
 class ESCStateTensorDataset(Dataset[torch.Tensor]):
-    """Reads flat ``state_tensors`` from ``save_state_split`` output."""
+    """Flat state tensors, computed fresh from ``save_state_split``'s bundles.
+
+    2026-09-15: this used to prefer a precomputed ``state_tensors`` array
+    from the payload when present, falling back to live ``to_tensor()``
+    calls only if absent. That shortcut went silently stale the moment
+    to_tensor()'s aggregation changed (found while debugging the state
+    representation-collapse investigation -- `run_flow_ablation.py` uses
+    this class, and `artifacts/states/*.pt` already had a `state_tensors`
+    key baked in under the old mean-pooling code, so flow_ablation training
+    would have kept reading pre-fix tensors indefinitely with no error).
+    Removed entirely rather than invalidating/rebuilding the cached key --
+    to_tensor()'s aggregation is still being actively compared across
+    several candidate methods, so any one-time cache rebuild would just go
+    stale again at the next change. Bundles store the pre-aggregation
+    components (history matrix, causal graph), which don't change when
+    to_tensor()'s aggregation does, so recomputing here is cheap (pure
+    tensor arithmetic on already-encoded embeddings, no Qwen calls) and
+    can never go stale again.
+    """
 
     def __init__(self, path: str) -> None:
         if not os.path.isfile(path):
             raise FileNotFoundError(path)
         payload = load_state_split(path)
-        st = payload.get("state_tensors")
-        if st is None:
-            bundles = payload.get("bundles") or []
-            if not bundles:
-                self._tensors = torch.zeros(0, ESCState.get_state_dim())
-            else:
-                rows = [esc_state_from_bundle(b).to_tensor() for b in bundles]
-                self._tensors = torch.stack(rows, dim=0)
+        bundles = payload.get("bundles") or []
+        if not bundles:
+            self._tensors = torch.zeros(0, ESCState.get_state_dim())
         else:
-            self._tensors = st
+            rows = [esc_state_from_bundle(b).to_tensor() for b in bundles]
+            self._tensors = torch.stack(rows, dim=0)
 
     def __len__(self) -> int:
         return int(self._tensors.shape[0])

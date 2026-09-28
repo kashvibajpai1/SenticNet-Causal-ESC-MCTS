@@ -29,6 +29,35 @@ _SYNTHETIC_WARNING = (
     "This does not reproduce the paper experiments."
 )
 
+SATURATION_LOG_INTERVAL = 50
+
+
+def _log_value_saturation(value: ValueNetwork, state_tensors: torch.Tensor, step: int) -> dict:
+    """Snapshot the value network's pre-activation/post-activation output
+    distribution on the current batch -- see scripts/run_causal_mcts.py's
+    identical helper for why field names are activation-agnostic (an
+    earlier version hardcoded torch.tanh(), which would have silently kept
+    logging fake numbers after the network switched to ReLU). Calls
+    value(state_tensors) -- the network's own forward() -- for
+    post-activation rather than reapplying an assumed activation.
+    state_tensors here are already flat (this trainer consumes
+    ESCStateTensorDataset, not ESCState objects)."""
+    with torch.no_grad():
+        h = value._trunk(state_tensors)
+        pre_activation = value._head(h).squeeze(-1)
+        post_activation = value(state_tensors).squeeze(-1)
+    return {
+        "step": step,
+        "pre_activation_mean": float(pre_activation.mean()),
+        "pre_activation_std": float(pre_activation.std()),
+        "pre_activation_min": float(pre_activation.min()),
+        "pre_activation_max": float(pre_activation.max()),
+        "post_activation_mean": float(post_activation.mean()),
+        "post_activation_std": float(post_activation.std()),
+        "post_activation_min": float(post_activation.min()),
+        "post_activation_max": float(post_activation.max()),
+    }
+
 
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
@@ -68,6 +97,7 @@ def main(argv: list[str] | None = None) -> None:
         print(_SYNTHETIC_WARNING)
 
     last_metrics: dict[str, float] = {}
+    saturation_log: list[dict] = []
     for step in range(max_steps):
         if loader_cycle is not None:
             states = next(loader_cycle)
@@ -76,12 +106,24 @@ def main(argv: list[str] | None = None) -> None:
         last_metrics = trainer.train_step(states)
         print(f"[FlowAblation] seed={seed} step={step} loss={last_metrics['loss']:.4f}")
 
+        if step % SATURATION_LOG_INTERVAL == 0 or step == max_steps - 1:
+            snap = _log_value_saturation(value, states, step)
+            saturation_log.append(snap)
+            print(
+                f"[FlowAblation] seed={seed} step={step} value_saturation "
+                f"pre_act(mean={snap['pre_activation_mean']:.4f} std={snap['pre_activation_std']:.4f}) "
+                f"post_act(mean={snap['post_activation_mean']:.4f} std={snap['post_activation_std']:.4f} "
+                f"min={snap['post_activation_min']:.4f} max={snap['post_activation_max']:.4f})"
+            )
+
     ckpt_dir = os.path.join(root, "checkpoints", "flow_ablation", f"seed{seed}")
     os.makedirs(ckpt_dir, exist_ok=True)
     torch.save(policy.state_dict(), os.path.join(ckpt_dir, "policy.pt"))
     torch.save(value.state_dict(), os.path.join(ckpt_dir, "value.pt"))
     with open(os.path.join(ckpt_dir, "final_metrics.json"), "w") as f:
         json.dump({"seed": seed, "max_steps": max_steps, **last_metrics}, f, indent=2)
+    with open(os.path.join(ckpt_dir, "value_saturation_log.json"), "w") as f:
+        json.dump(saturation_log, f, indent=2)
     print(f"[FlowAblation] seed={seed} checkpoint saved -> {ckpt_dir}")
 
 

@@ -156,6 +156,17 @@ class CausalMCTSTrainer:
         loss.backward()
         self.optimizer.step()
 
+        with torch.no_grad():
+            v_batch = values.detach()
+            r_batch = R.detach()
+            v_std = v_batch.std(unbiased=False)
+            r_std = r_batch.std(unbiased=False)
+            if v_std > 1e-8 and r_std > 1e-8:
+                cov = ((v_batch - v_batch.mean()) * (r_batch - r_batch.mean())).mean()
+                pearson_r = float((cov / (v_std * r_std)).item())
+            else:
+                pearson_r = 0.0
+
         return {
             "loss": float(loss.item()),
             "value_loss": float(value_loss.item()),
@@ -163,4 +174,9 @@ class CausalMCTSTrainer:
             "rank_loss": float(rank_loss.item()),
             "policy_ce_loss": float(policy_ce_loss.item()),
             "entropy": float(entropy.item()),
+            "pearson_r": pearson_r,
+            "reward_mean": float(R.mean().item()),
+            "reward_std": float(R.std(unbiased=False).item()),
+            "value_mean": float(values.mean().item()),
+            "value_std": float(values.std(unbiased=False).item()),
         }

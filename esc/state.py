@@ -110,28 +110,81 @@ class ESCState:
         """
         Flatten state to a single vector for the policy/value networks.
 
-        Pooling:
-          H̄_t = mean(H_t, dim=0)    → [D_H]
-          C̄_t = mean(C_t, dim=0)    → [D_C]  (from causal graph)
+        Aggregation (changed 2026-09-15, revised same day -- see debug spec
+        Steps 1b/2 in the conversation log):
+
+        Original: mean-pooled across all K history rows and all N_C cause
+        rows. Diagnosed as the cause of severe state-vector collapse
+        (pairwise cosine similarity ~0.94-0.97 on genuinely diverse real
+        conversations, vs ~0.6 for individual turn embeddings) --
+        history_embeddings' window mixes topic-specific seeker turns with
+        generic, similarly-phrased supporter turns, and averaging lets the
+        cross-conversation-similar supporter turns dilute the
+        conversation-specific seeker content; similarly for cause spans of
+        uneven salience.
+
+        First revision (select-only, superseded): replaced the mean with
+        selecting a single row (most recent history turn, most salient
+        cause) -- H̄_t = H_t[-1], C̄_t = C_t[0]. This measurably reduced
+        similarity (mean state-vector cosine 0.958 -> 0.866) but discards
+        K-1 history rows and N_C-1 cause rows entirely, which was not the
+        intended fix. Its probe results are preserved in
+        results/diagnostics/step1b_multiturn_averaging.json and
+        step2_supervised_probe.json (both pre-concatenation) as a
+        comparison point.
+
+        Concatenation (superseded 2026-09-21): kept every row distinct
+        instead of reducing to one -- H̄_t = flatten(H_t), C̄_t =
+        flatten(C_t). Reasonable while `encode_dialogue` still produced K
+        genuinely different history rows and N_C genuinely different
+        cause rows. It no longer is: `encode_dialogue` was switched to
+        whole-window encoding (join the K turns / N_C cause spans into one
+        text block, pool once via Qwen), and `from_dialogue` repeats that
+        single result K (resp. N_C) times purely to keep this class's
+        [K, D_H] / [N_C, D_C] field shapes compatible with esc/env.py's
+        sliding window and the transition model -- see from_dialogue's
+        docstring. Concatenating those now-identical rows produces a
+        5507-dim vector where large contiguous blocks are exact
+        duplicates of each other: no additional signal, just wasted
+        dimensions (bigger networks, more parameters, slower, for
+        nothing).
+
+        Current (single-row extraction): H̄_t = H_t[-1], C̄_t = C_t[0].
+        Since whole-window makes every row within a group identical, this
+        is mathematically equivalent to using the raw pre-repeat
+        [D_H]/[D_C] vectors directly -- confirmed by exact reproduction in
+        scripts/diagnose_step4_verify_option_b.py against the diagnostic
+        scripts that never went through the repeat step at all. This is
+        NOT "select" from the pre-whole-window comparison (which extracted
+        one of K genuinely *different* rows, discarding real information
+        from the other K-1); it's a no-op flatten of duplicate rows,
+        recovering the original D_H+D_C+D_E+3 = 1283 state_dim.
 
         Returns
         -------
         torch.Tensor of shape [D_H + D_C + D_E + 3]
         """
-        h_pooled = self.history_embeddings.mean(dim=0)                    # [D_H]
+        h = self.history_embeddings[-1]                                   # [D_H]
         c_matrix = self.causal_graph.cause_embedding_matrix(self.N_C, self.D_C)
-        c_pooled = c_matrix.mean(dim=0)                                   # [D_C]
+        c = c_matrix[0]                                                   # [D_C]
 
         return torch.cat([
-            h_pooled,               # [D_H]
-            c_pooled,               # [D_C]
+            h,                      # [D_H]
+            c,                      # [D_C]
             self.emotion_vector,    # [D_E]
             self.phase_embedding,   # [3]
         ], dim=0)
 
     @classmethod
     def get_state_dim(cls) -> int:
-        """Total state vector dimension d = D_H + D_C + D_E + D_P."""
+        """Total state vector dimension: d = D_H + D_C + D_E + D_P = 1283.
+
+        Reverted 2026-09-21 from the brief K*D_H + N_C*D_C + D_E + D_P
+        (5507) concatenation-era formula -- see to_tensor()'s docstring:
+        whole-window encoding makes every one of the K (resp. N_C)
+        repeated rows identical, so concatenating them added zero signal,
+        only wasted dimensions.
+        """
         return cls.D_H + cls.D_C + cls.D_E + cls.D_P
 
     # ------------------------------------------------------------------
@@ -156,12 +209,18 @@ class ESCState:
 
             result = encoder(turns)
 
-        and must return a dict with keys:
-          - "history"  : Tensor [K, D_H]   — turn encodings
-          - "emotion"  : Tensor [D_E]       — current emotion vector
-          - "causes"   : list[dict] where each dict has:
-                           "label"     : str
-                           "embedding" : Tensor [D_C]
+        and must return a dict with keys (2026-09-20, whole-window encoding
+        -- see models/backbone_qwen.py::encode_dialogue's docstring):
+          - "history"        : Tensor [D_H]   — single whole-window turn embedding
+          - "emotion"        : Tensor [D_E]   — current emotion vector
+          - "cause_embedding": Tensor [D_C]   — single whole-window cause embedding
+          - "cause_label"    : str            — truncated text excerpt
+
+        The single history/cause vectors are repeated to fill the
+        [K, D_H] / [N_C, D_C] matrix shapes the rest of the pipeline
+        (esc/env.py's sliding window, the transition model) still expects
+        -- Option B from the debug spec: interface-compatible, not a full
+        architecture change. All K (resp. N_C) rows are identical.
 
         Parameters
         ----------
@@ -179,22 +238,20 @@ class ESCState:
 
         if encoder is not None:
             result = encoder(turns)
-            history = result["history"]                    # [K, D_H]
-            emotion = result["emotion"]                    # [D_E]
-            cause_dicts = result.get("causes", [])
+            history_vec = result["history"]                 # [D_H], whole-window
+            emotion = result["emotion"]                     # [D_E]
+            cause_vec = result["cause_embedding"]            # [D_C], whole-window
+            cause_label = result.get("cause_label") or "cause"
+
+            # Repeat to preserve the [K, D_H] / [N_C, D_C] shapes downstream
+            # code expects (Option B -- see this method's docstring). All
+            # rows are identical since whole-window collapses the group to
+            # one vector before this point.
+            history = history_vec.unsqueeze(0).repeat(cls.K_HISTORY_WINDOW, 1)
 
             graph = CausalGraph(d_c=cls.D_C)
-            for cd in cause_dicts[: cls.N_C]:
-                graph.add_cause(
-                    label=cd["label"],
-                    embedding=cd["embedding"],
-                )
-            # Pad with anonymous causes if fewer than N_C were extracted
-            while graph.num_causes < cls.N_C:
-                graph.add_cause(
-                    label=f"cause_{graph.num_causes}",
-                    embedding=torch.zeros(cls.D_C),
-                )
+            for _ in range(cls.N_C):
+                graph.add_cause(label=cause_label, embedding=cause_vec)
         else:
             # Placeholder: zeros everywhere, anonymous causes
             history = torch.zeros(cls.K_HISTORY_WINDOW, cls.D_H)

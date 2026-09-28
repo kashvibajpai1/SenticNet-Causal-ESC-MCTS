@@ -29,6 +29,7 @@ from models.transition import LinearTransitionModel, RandomTransitionModel, Tran
 from esc.env import ESCEnv
 from mcts.node import TreeNode
 from mcts.mcts import MCTS, PolicyNetwork, ValueNetwork
+from models.value import ValueNetwork as ProductionValueNetwork
 from utils.seed import set_global_seed, ExperimentConfig
 from utils.logging import EpisodeLogger
 
@@ -166,26 +167,48 @@ class TestESCState:
         assert vec.shape == (ESCState.get_state_dim(),)
 
     def test_get_state_dim_correct(self):
-        # D_P is now 3 (not 64), so total = 768+384+128+3 = 1283
+        # Reverted 2026-09-21 to D_H+D_C+D_E+D_P = 1283 -- see
+        # to_tensor()'s docstring. The brief K*D_H+N_C*D_C+D_E+D_P=5507
+        # concatenation formula (2026-09-15) stopped making sense once
+        # whole-window encoding made every repeated row identical.
         expected = ESCState.D_H + ESCState.D_C + ESCState.D_E + ESCState.D_P
         assert ESCState.get_state_dim() == expected
         assert ESCState.D_P == 3
 
-    def test_to_tensor_pooling_correct(self, graph):
-        """Mean-pooling of history and cause embeddings is numerically correct."""
+    def test_to_tensor_pooling_correct(self):
+        """to_tensor() extracts the last history row and the first cause
+        row (H_t[-1], C_t[0]) -- current as of 2026-09-21. Under
+        whole-window encoding every row within a group is identical (see
+        from_dialogue's docstring), so this is a lossless flatten, not a
+        discard -- unlike the pre-whole-window "select" revision this
+        superficially resembles, which extracted one of K genuinely
+        *different* rows and did lose information."""
         hist = torch.randn(ESCState.K_HISTORY_WINDOW, ESCState.D_H)
         emo = torch.randn(ESCState.D_E)
         phase = torch.softmax(torch.randn(3), dim=0)
+
+        distinguishable_graph = CausalGraph(d_c=ESCState.D_C)
+        for i in range(ESCState.N_C):
+            distinguishable_graph.add_cause(
+                label=f"cause_{i}", embedding=torch.full((ESCState.D_C,), float(i))
+            )
+
         state = ESCState(
             history_embeddings=hist,
-            causal_graph=graph,
+            causal_graph=distinguishable_graph,
             emotion_vector=emo,
             phase_embedding=phase,
             target_emotion=torch.zeros(ESCState.D_E),
         )
         vec = state.to_tensor()
         DH, DC, DE = ESCState.D_H, ESCState.D_C, ESCState.D_E
-        assert torch.allclose(vec[:DH], hist.mean(dim=0), atol=1e-5)
+
+        assert vec.shape == (DH + DC + DE + 3,)
+        assert torch.allclose(vec[:DH], hist[-1], atol=1e-5)
+        assert not torch.allclose(vec[:DH], hist.mean(dim=0), atol=1e-5)
+        # First-added cause (index 0) is extracted.
+        assert torch.allclose(vec[DH: DH + DC], torch.zeros(DC), atol=1e-5)
+
         assert torch.allclose(vec[DH + DC: DH + DC + DE], emo, atol=1e-5)
         assert torch.allclose(vec[DH + DC + DE:], phase, atol=1e-5)
 
@@ -215,21 +238,29 @@ class TestESCState:
             )
 
     def test_from_dialogue_with_encoder_hook(self):
-        """Encoder hook is called and its output is used."""
+        """Encoder hook is called and its output is used.
+
+        2026-09-20 (Option B, whole-window encoding): the encoder now
+        returns single [D_H]/[D_C] vectors, which from_dialogue() repeats
+        to fill the [K, D_H] / [N_C, D_C] shapes downstream code expects
+        -- see esc/state.py::from_dialogue's docstring.
+        """
         def fake_encoder(turns):
             return {
-                "history": torch.ones(ESCState.K_HISTORY_WINDOW, ESCState.D_H),
+                "history": torch.ones(ESCState.D_H),
                 "emotion": torch.ones(ESCState.D_E) * 0.5,
-                "causes": [
-                    {"label": "stress", "embedding": torch.ones(ESCState.D_C) * 0.1}
-                ],
+                "cause_embedding": torch.ones(ESCState.D_C) * 0.1,
+                "cause_label": "stress",
             }
         state = ESCState.from_dialogue(["test"], encoder=fake_encoder)
         assert torch.all(state.history_embeddings == 1.0)
         assert torch.all(state.emotion_vector == 0.5)
-        # First cause node should have embedding ~0.1
-        node = state.causal_graph.get_node(0)
-        assert node.embedding[0].item() == pytest.approx(0.1)
+        # All N_C cause nodes should be identical (repeated whole-window embedding).
+        assert state.causal_graph.num_causes == ESCState.N_C
+        for i in range(ESCState.N_C):
+            node = state.causal_graph.get_node(i)
+            assert node.embedding[0].item() == pytest.approx(0.1)
+            assert node.label == "stress"
 
 
 # ======================================================================
@@ -809,9 +840,39 @@ class TestMCTS:
         assert out.sum().item() == pytest.approx(1.0, abs=1e-5)
 
     def test_value_network_range(self, base_state):
+        """This ValueNetwork is mcts.mcts's internal duplicate (see this
+        file's imports) -- the fallback default MCTS() constructs when no
+        explicit value_network is passed in. It is NOT the class used by
+        any production training/eval script (those all pass explicit
+        models.value.ValueNetwork instances), so the 2026-09-21 tanh->ReLU
+        change (see models/value.py's docstring) deliberately does not
+        touch it -- still tanh-bounded [-1, 1]."""
         net = ValueNetwork(state_dim=ESCState.get_state_dim())
         v = net.value(base_state.to_tensor())
         assert -1.0 <= v <= 1.0
+
+    def test_production_value_network_range(self, base_state):
+        """models.value.ValueNetwork -- the actual class every production
+        training/eval script uses -- changed tanh -> ReLU on 2026-09-21.
+        No prior test exercised this specific class directly (only the
+        unrelated mcts.mcts duplicate above), so this is new coverage, not
+        just an updated assertion."""
+        net = ProductionValueNetwork(state_dim=ESCState.get_state_dim())
+        v = net.value(base_state.to_tensor())
+        assert v >= 0.0
+
+    def test_production_value_network_relu_not_tanh(self, base_state):
+        """Confirm the output activation is really ReLU (unbounded above,
+        zero for negative pre-activation) and not still tanh (which would
+        cap near 1.0 and never hit exactly 0)."""
+        net = ProductionValueNetwork(state_dim=ESCState.get_state_dim())
+        x = base_state.to_tensor()
+        h = net._trunk(x)
+        pre_activation = net._head(h)
+        out = net(x)
+        assert torch.allclose(out, torch.relu(pre_activation))
+        if pre_activation.item() < 0:
+            assert out.item() == 0.0
 
     def test_search_with_policy_returns_correct_types(self, base_state, env):
         set_global_seed(5)

@@ -118,33 +118,43 @@ class QwenBackbone(nn.Module):
         count = mask.sum().clamp(min=1.0)
         return (summed / count).float()
 
-    def encode_dialogue(self, turns: list[str]) -> dict[str, torch.Tensor | list[dict]]:
+    def encode_dialogue(self, turns: list[str]) -> dict[str, torch.Tensor | str]:
         """
         Encode dialogue for ESC state construction with real Qwen embeddings.
+
+        2026-09-20 (debug spec, Option B): history and causes are now
+        whole-window encoded -- the K most-recent turns (resp. candidate
+        cause spans) are joined into ONE text block and pooled ONCE,
+        instead of pooling each turn/span separately and combining
+        downstream. This was the only one of five aggregation candidates
+        with a statistically significant edge over the majority-class
+        floor on a properly-powered probe (p=0.0052, 95% CI
+        [+1.06,+5.88]pp at n_test=1700 -- see the conversation log).
+        `ESCState.from_dialogue` repeats these single vectors to preserve
+        the [K, D_H] / [N_C, D_C] matrix shapes `esc/env.py` and the
+        transition model already expect (Option B: interface-compatible,
+        not a full architecture change) -- see its docstring.
 
         Returns
         -------
         dict with keys:
 
-        - ``history`` : ``(ESCState.K_HISTORY_WINDOW, ESCState.D_H)`` — the
-          most recent turns are encoded and placed in the last
-          ``min(n, K)`` rows, zero-padded at the start when ``n < K``.
+        - ``history`` : ``(ESCState.D_H,)`` — single pooled+projected
+          embedding of the K most recent turns joined into one text block.
         - ``emotion`` : ``(ESCState.D_E,)`` — pooled embedding of the full
-          dialogue so far, projected and squashed to ``(-1, 1)``.
-        - ``causes``  : up to ``N_C`` dicts with ``"label"`` (a truncated
-          text excerpt) and ``"embedding"`` (projected pooled span embedding).
+          dialogue so far, projected and squashed to ``(-1, 1)`` (already
+          whole-window by construction, unchanged).
+        - ``cause_embedding`` : ``(ESCState.D_C,)`` — single pooled+
+          projected embedding of the candidate cause spans joined into one
+          text block.
+        - ``cause_label`` : truncated text excerpt for debugging/display.
         """
         self.load()
-        k, d_h = ESCState.K_HISTORY_WINDOW, ESCState.D_H
+        k = ESCState.K_HISTORY_WINDOW
         n_c = ESCState.N_C
 
-        n = len(turns)
-        history = torch.zeros(k, d_h)
-        recent = turns[-k:] if n > 0 else []
-        start_row = k - len(recent)
-        for i, turn_text in enumerate(recent):
-            pooled = self._pooled_embedding(turn_text)
-            history[start_row + i] = self._proj_history(pooled)
+        joined_history = " ".join(turns[-k:]) if turns else ""
+        history = self._proj_history(self._pooled_embedding(joined_history))
 
         full_text = " ".join(turns) if turns else ""
         emotion_raw = self._pooled_embedding(full_text)
@@ -152,12 +162,15 @@ class QwenBackbone(nn.Module):
 
         seeker_turns = [t for i, t in enumerate(turns) if i % 2 == 0 and t.strip()]
         candidate_spans = list(reversed(seeker_turns))[:n_c]
-        causes: list[dict] = []
-        for span in candidate_spans:
-            pooled = self._pooled_embedding(span)
-            causes.append({"label": span[:60], "embedding": self._proj_cause(pooled)})
+        joined_causes = " ".join(candidate_spans) if candidate_spans else ""
+        cause_embedding = self._proj_cause(self._pooled_embedding(joined_causes))
 
-        return {"history": history, "emotion": emotion, "causes": causes}
+        return {
+            "history": history,
+            "emotion": emotion,
+            "cause_embedding": cause_embedding,
+            "cause_label": joined_causes[:60],
+        }
 
     def generate_response(self, prompt: str) -> str:
         """Real greedy-decoded response from the loaded Qwen model."""
