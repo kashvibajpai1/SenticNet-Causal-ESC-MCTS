@@ -8,9 +8,8 @@ from typing import Any
 import torch
 from torch.utils.data import Dataset
 
-from esc.state import ESCState
-
 from data.serialization import esc_state_from_bundle, load_state_split
+from esc.state import ESCState
 
 __all__ = ["ESCStateBundleDataset", "ESCStateTensorDataset"]
 

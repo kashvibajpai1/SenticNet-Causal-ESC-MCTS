@@ -18,21 +18,30 @@ import json
 import math
 import os
 import tempfile
+
 import pytest
 import torch
 
+from esc.action import (
+    ActionEmbedder,
+    ESCAction,
+    embed_action,
+    generate_candidate_actions,
+)
 from esc.causal_graph import CausalGraph, CauseNode
-from esc.state import ESCState
-from esc.action import ESCAction, generate_candidate_actions, embed_action, ActionEmbedder
-from esc.reward import compute_reward, reward_components, _r_cause, _r_emotion, _r_phase
-from models.transition import LinearTransitionModel, RandomTransitionModel, TransitionOutput
 from esc.env import ESCEnv
-from mcts.node import TreeNode
+from esc.reward import _r_cause, _r_emotion, _r_phase, compute_reward, reward_components
+from esc.state import ESCState
 from mcts.mcts import MCTS, PolicyNetwork, ValueNetwork
+from mcts.node import TreeNode
+from models.transition import (
+    LinearTransitionModel,
+    RandomTransitionModel,
+    TransitionOutput,
+)
 from models.value import ValueNetwork as ProductionValueNetwork
-from utils.seed import set_global_seed, ExperimentConfig
 from utils.logging import EpisodeLogger
-
+from utils.seed import ExperimentConfig, set_global_seed
 
 # ======================================================================
 # Shared fixtures
@@ -1037,7 +1046,7 @@ class TestEndToEnd:
             )
         )
         action = candidates[0]
-        next_state, reward, done, info = env.step(state, action)
+        next_state, reward, done, _info = env.step(state, action)
         assert math.isfinite(reward)
         assert next_state.turn_index == 1
         assert not done

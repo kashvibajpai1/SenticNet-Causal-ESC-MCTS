@@ -2,15 +2,20 @@
 
 from models.backbone_qwen import QwenBackbone
 from models.policy import PolicyNetwork
-from models.transition import TransitionModel, LinearTransitionModel, RandomTransitionModel, TransitionOutput
+from models.transition import (
+    LinearTransitionModel,
+    RandomTransitionModel,
+    TransitionModel,
+    TransitionOutput,
+)
 from models.value import ValueNetwork
 
 __all__ = [
+    "LinearTransitionModel",
     "PolicyNetwork",
     "QwenBackbone",
-    "TransitionModel",
-    "LinearTransitionModel",
     "RandomTransitionModel",
+    "TransitionModel",
     "TransitionOutput",
     "ValueNetwork",
 ]

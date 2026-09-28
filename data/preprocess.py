@@ -6,10 +6,8 @@ import random
 import re
 from typing import Any
 
-from esc.action import ESCAction
-
 from data.conversation_schema import ConversationRecord
-
+from esc.action import ESCAction
 
 _WS_RE = re.compile(r"\s+")
 
@@ -140,6 +138,4 @@ def validate_record(record: ConversationRecord, *, min_turns: int = 2) -> bool:
         return False
     if not record.conversation_id:
         return False
-    if record.speaker_roles and record.speaker_roles[0] != "seeker":
-        return False
-    return True
+    return not (record.speaker_roles and record.speaker_roles[0] != "seeker")

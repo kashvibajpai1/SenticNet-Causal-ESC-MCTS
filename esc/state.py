@@ -19,13 +19,14 @@ Changes from v1
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Callable, ClassVar, Optional
+from typing import ClassVar, Optional
+
 import torch
 import torch.nn.functional as F
 
 from esc.causal_graph import CausalGraph
-
 
 # Type alias for the optional encoder hook
 EncoderFn = Callable[[list[str]], dict[str, torch.Tensor]]
@@ -195,9 +196,9 @@ class ESCState:
     def from_dialogue(
         cls,
         turns: list[str],
-        encoder: Optional[EncoderFn] = None,
-        target_emotion: Optional[torch.Tensor] = None,
-    ) -> "ESCState":
+        encoder: EncoderFn | None = None,
+        target_emotion: torch.Tensor | None = None,
+    ) -> ESCState:
         """
         Build an ESCState from raw dialogue turns.
 
@@ -310,7 +311,7 @@ class ESCState:
             target_emotion=target_emotion,
         )
 
-    def clone(self) -> "ESCState":
+    def clone(self) -> ESCState:
         """
         Deep copy this state for MCTS tree expansion.
 

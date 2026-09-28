@@ -16,14 +16,15 @@ Changes from v1
 from __future__ import annotations
 
 from typing import Any, Optional
+
 import torch
 import torch.nn.functional as F
 
-from esc.state import ESCState
 from esc.action import ESCAction
-from esc.reward import compute_reward, reward_components
 from esc.causal_graph import CausalGraph
-from models.transition import TransitionModel, RandomTransitionModel
+from esc.reward import compute_reward, reward_components
+from esc.state import ESCState
+from models.transition import RandomTransitionModel, TransitionModel
 
 
 class ESCEnv:
@@ -49,11 +50,11 @@ class ESCEnv:
 
     def __init__(
         self,
-        transition_model: Optional[TransitionModel] = None,
+        transition_model: TransitionModel | None = None,
         max_horizon: int = 20,
         reward_weights: tuple[float, float, float] = (1.0, 1.0, 1.0),
         device: str = "cpu",
-        config: Optional[dict[str, Any]] = None,
+        config: dict[str, Any] | None = None,
     ) -> None:
         self._transition = transition_model or RandomTransitionModel(
             d_e=ESCState.D_E,
@@ -106,8 +107,8 @@ class ESCEnv:
 
     def reset(
         self,
-        initial_turns: Optional[list[str]] = None,
-        target_emotion: Optional[torch.Tensor] = None,
+        initial_turns: list[str] | None = None,
+        target_emotion: torch.Tensor | None = None,
     ) -> ESCState:
         """
         Reset the environment and return the initial state s_0.

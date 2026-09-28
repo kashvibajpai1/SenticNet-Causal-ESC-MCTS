@@ -16,8 +16,8 @@ Usage: python -m scripts.diagnose_step0_timing_calibration
 
 from __future__ import annotations
 
-import time
 import os
+import time
 
 from data import encoder_adapter, iter_jsonl
 from esc.state import ESCState

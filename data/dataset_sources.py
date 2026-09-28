@@ -7,10 +7,10 @@ or ConvoKit at interpreter startup.
 
 from __future__ import annotations
 
-from typing import Any, Iterator, Literal
+from collections.abc import Iterator
+from typing import Any, Literal
 
 from data.conversation_schema import ConversationRecord
-
 
 SeekerSupporter = Literal["seeker", "supporter"]
 
@@ -211,7 +211,7 @@ def convokit_corpus_to_records(
             metadata=metadata,
         )
 
-        n += 1
+        n += 1  # noqa: SIM113 -- manual counter kept for exact break-condition clarity
         if max_conversations is not None and n >= max_conversations:
             break
 

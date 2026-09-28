@@ -32,8 +32,8 @@ import random
 import time
 
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
+from torch import nn
 
 from data import encoder_adapter, iter_jsonl
 from esc.action import ESCAction

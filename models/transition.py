@@ -13,10 +13,10 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
 import torch
-import torch.nn as nn
+from torch import nn
 
-from esc.state import ESCState
 from esc.action import ESCAction
+from esc.state import ESCState
 
 
 @dataclass

@@ -20,15 +20,15 @@ from __future__ import annotations
 
 import math
 from typing import Any, Optional
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
 
-from esc.state import ESCState
+import torch
+import torch.nn.functional as F
+from torch import nn
+
 from esc.action import ESCAction, generate_candidate_actions
 from esc.env import ESCEnv
+from esc.state import ESCState
 from mcts.node import TreeNode
-
 
 # ------------------------------------------------------------------
 # Neural network components
@@ -172,15 +172,15 @@ class MCTS:
 
     def __init__(
         self,
-        env: Optional[ESCEnv] = None,
-        policy_network: Optional[PolicyNetwork] = None,
-        value_network: Optional[ValueNetwork] = None,
-        state_dim: Optional[int] = None,
-        num_actions: Optional[int] = None,
+        env: ESCEnv | None = None,
+        policy_network: PolicyNetwork | None = None,
+        value_network: ValueNetwork | None = None,
+        state_dim: int | None = None,
+        num_actions: int | None = None,
         hidden_dim: int = 256,
         c_puct: float = 1.0,
         num_simulations: int = 50,
-        config: Optional[dict[str, Any]] = None,
+        config: dict[str, Any] | None = None,
     ) -> None:
         self._env = env or ESCEnv()
         self._state_dim = state_dim or ESCState.get_state_dim()

@@ -109,7 +109,7 @@ def main(argv: list[str] | None = None) -> int:
     if not args.skip_cornell:
         try:
             cornell_corpus = load_cornell_esc_corpus()
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 -- deliberate catch-all for any convokit/network failure
             print(_convokit_failure_banner(e), file=sys.stderr)
             return 1
 
@@ -125,7 +125,7 @@ def main(argv: list[str] | None = None) -> int:
             mapped = _map_esconv_split(split_name)
             try:
                 gen = iter_esconv_records(split_name, max_samples=None)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 -- deliberate catch-all for any HF datasets/network failure
                 print(
                     f"[preprocess] ESConv unavailable ({e}); install `datasets` or pass --skip-esconv.",
                     file=sys.stderr,

@@ -22,7 +22,12 @@ import torch.nn.functional as F
 from esc.action import ESCAction
 from esc.env import ESCEnv
 from esc.state import ESCState
-from flow import compute_edge_flow, compute_state_flow, flow_consistency_loss, ranking_loss
+from flow import (
+    compute_edge_flow,
+    compute_state_flow,
+    flow_consistency_loss,
+    ranking_loss,
+)
 from mcts.mcts import MCTS
 from models.policy import PolicyNetwork
 from models.transition import LinearTransitionModel

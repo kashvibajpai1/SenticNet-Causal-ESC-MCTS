@@ -15,6 +15,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from typing import Optional
+
 import torch
 
 
@@ -78,7 +79,7 @@ class CausalGraph:
     def add_cause(
         self,
         label: str,
-        embedding: Optional[torch.Tensor] = None,
+        embedding: torch.Tensor | None = None,
         initial_resolution: float = 0.0,
     ) -> CauseNode:
         """
@@ -218,7 +219,7 @@ class CausalGraph:
         return [self._nodes[dst] for dst in self._edges.get(index, [])]
 
     @classmethod
-    def placeholder(cls, n_causes: int, d_c: int) -> "CausalGraph":
+    def placeholder(cls, n_causes: int, d_c: int) -> CausalGraph:
         """
         Build a zero-filled graph with n_causes anonymous nodes and no edges.
 

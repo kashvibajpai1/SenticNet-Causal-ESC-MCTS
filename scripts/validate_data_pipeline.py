@@ -6,9 +6,8 @@ import argparse
 import os
 import sys
 
-from esc.state import ESCState
-
 from data import esc_state_from_bundle, iter_jsonl, load_state_split
+from esc.state import ESCState
 
 
 def main(argv: list[str] | None = None) -> int:

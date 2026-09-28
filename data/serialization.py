@@ -3,15 +3,15 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Any, Iterator
+from typing import Any
 
 import torch
 
+from data.conversation_schema import ConversationRecord
 from esc.causal_graph import CausalGraph
 from esc.state import ESCState
-
-from data.conversation_schema import ConversationRecord
 
 
 def write_jsonl(path: str | Path, records: Iterator[ConversationRecord]) -> int:
@@ -99,9 +99,9 @@ def esc_state_from_bundle(bundle: dict[str, Any]) -> ESCState:
     cid = bundle.get("conversation_id")
     src = bundle.get("source")
     if cid is not None:
-        setattr(state, "_conversation_id", cid)
+        state._conversation_id = cid
     if src is not None:
-        setattr(state, "_source", src)
+        state._source = src
     return state
 
 

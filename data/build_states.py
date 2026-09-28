@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 import hashlib
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 import torch
 
-from esc.state import ESCState, EncoderFn
-
 from data.conversation_schema import ConversationRecord
+from esc.state import EncoderFn, ESCState
 
 
 def deterministic_target_emotion(label: str | None, *, dim: int) -> torch.Tensor:
@@ -77,6 +77,6 @@ def build_esc_state_from_record(
     )
 
     # Attach lightweight provenance for debugging (not part of MDP tensor contract)
-    setattr(state, "_conversation_id", record.conversation_id)
-    setattr(state, "_source", record.source)
+    state._conversation_id = record.conversation_id
+    state._source = record.source
     return state

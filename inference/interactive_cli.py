@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import os
-from typing import List
 
 from esc.action import ESCAction
 from esc.env import ESCEnv
@@ -24,7 +23,7 @@ def run_interactive_session() -> None:
     seed = int(config.get("seed", 42))
     set_global_seed(seed)
 
-    dialogue: List[str] = []
+    dialogue: list[str] = []
 
     state_dim = ESCState.get_state_dim()
     transition_model = LinearTransitionModel(

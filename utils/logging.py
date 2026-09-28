@@ -31,10 +31,11 @@ import os
 import time
 from dataclasses import asdict, dataclass, field
 from typing import Any, Optional
+
 import torch
 
-from esc.state import ESCState
 from esc.action import ESCAction
+from esc.state import ESCState
 
 
 @dataclass
@@ -82,7 +83,7 @@ class EpisodeLogger:
 
     def __init__(self) -> None:
         self._episodes: list[EpisodeRecord] = []
-        self._current: Optional[EpisodeRecord] = None
+        self._current: EpisodeRecord | None = None
 
     # ------------------------------------------------------------------
     # Episode lifecycle
@@ -217,7 +218,7 @@ class EpisodeLogger:
             json.dump(data, f, indent=2)
 
     @classmethod
-    def load(cls, path: str) -> "EpisodeLogger":
+    def load(cls, path: str) -> EpisodeLogger:
         """
         Reconstruct a logger from a saved JSON file (read-only replay).
 

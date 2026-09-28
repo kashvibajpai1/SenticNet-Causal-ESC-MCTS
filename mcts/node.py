@@ -18,10 +18,11 @@ from __future__ import annotations
 
 import math
 from typing import Optional
+
 import torch
 
-from esc.state import ESCState
 from esc.action import ESCAction
+from esc.state import ESCState
 
 # --- TEMPORARY DIAGNOSTIC LOGGING (2026-09-21, PUCT exploration-collapse
 # investigation) --- Off by default (no-op, zero overhead) so training/eval
@@ -56,13 +57,13 @@ class TreeNode:
     def __init__(
         self,
         state: ESCState,
-        parent: Optional["TreeNode"] = None,
-        parent_action: Optional[ESCAction] = None,
+        parent: TreeNode | None = None,
+        parent_action: ESCAction | None = None,
         prior: float = 1.0,
     ) -> None:
         self.state: ESCState = state
-        self.parent: Optional[TreeNode] = parent
-        self.parent_action: Optional[ESCAction] = parent_action
+        self.parent: TreeNode | None = parent
+        self.parent_action: ESCAction | None = parent_action
 
         # PUCT statistics
         self.N: int = 0
@@ -143,7 +144,7 @@ class TreeNode:
             raise KeyError(f"Action {action} not found in children")
         self.children[action].state = state
 
-    def select_child(self, c_puct: float = 1.0) -> tuple[ESCAction, "TreeNode"]:
+    def select_child(self, c_puct: float = 1.0) -> tuple[ESCAction, TreeNode]:
         """
         Select the child with the highest PUCT score.
 
@@ -171,8 +172,8 @@ class TreeNode:
 
         sqrt_n_parent = math.sqrt(max(self.N, 1))  # safe: ≥1 avoids 0 term
 
-        best_action: Optional[ESCAction] = None
-        best_child: Optional[TreeNode] = None
+        best_action: ESCAction | None = None
+        best_child: TreeNode | None = None
         best_value: float = -float("inf")
         _candidates: list[dict] = [] if PUCT_DEBUG else None  # type: ignore[assignment]
 
@@ -240,7 +241,7 @@ class TreeNode:
         value : Value estimate to propagate (e.g. cumulative rollout reward
                 or value-network output at the leaf)
         """
-        node: Optional[TreeNode] = self
+        node: TreeNode | None = self
         while node is not None:
             node.update(value)
             node = node.parent
@@ -305,7 +306,7 @@ class TreeNode:
             node = node.parent
         return d
 
-    def most_visited_child(self) -> tuple[ESCAction, "TreeNode"]:
+    def most_visited_child(self) -> tuple[ESCAction, TreeNode]:
         """
         Return the child with the highest visit count.
 

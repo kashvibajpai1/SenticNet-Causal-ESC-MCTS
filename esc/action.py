@@ -16,8 +16,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from typing import ClassVar, Optional
+
 import torch
-import torch.nn as nn
+from torch import nn
 
 from esc.state import ESCState
 
@@ -36,7 +37,7 @@ class ESCAction:
 
     strategy_id: int
     cause_index: int
-    embedding: Optional[torch.Tensor] = field(default=None, repr=False)
+    embedding: torch.Tensor | None = field(default=None, repr=False)
 
     # ------------------------------------------------------------------
     # Strategy catalogue (8 ESC strategies from literature)
@@ -94,7 +95,7 @@ class ESCAction:
 def generate_candidate_actions(
     state: ESCState,
     num_strategies: int = ESCAction.NUM_STRATEGIES,
-    num_causes: Optional[int] = None,
+    num_causes: int | None = None,
     filter_by_phase: bool = True,
 ) -> list[ESCAction]:
     """

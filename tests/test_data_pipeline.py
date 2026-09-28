@@ -9,8 +9,6 @@ import tempfile
 import pytest
 import torch
 
-from esc.state import ESCState
-
 from data import (
     build_esc_state_from_record,
     esc_state_from_bundle,
@@ -22,6 +20,7 @@ from data import (
     write_jsonl,
 )
 from data.conversation_schema import ConversationRecord
+from esc.state import ESCState
 from train.train_data import ESCStateBundleDataset, ESCStateTensorDataset
 
 
@@ -100,7 +99,8 @@ def test_jsonl_write_read() -> None:
     with tempfile.TemporaryDirectory() as tmp:
         path = os.path.join(tmp, "c.jsonl")
         write_jsonl(path, iter([rec]))
-        line = open(path, encoding="utf-8").read().strip()
+        with open(path, encoding="utf-8") as f:
+            line = f.read().strip()
         obj = json.loads(line)
         back = ConversationRecord.from_json_obj(obj)
         assert back.conversation_id == "j1"

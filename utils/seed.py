@@ -24,6 +24,7 @@ import os
 import random
 from dataclasses import asdict, dataclass, field
 from typing import Optional
+
 import torch
 
 
@@ -110,7 +111,7 @@ class ExperimentConfig:
             json.dump(asdict(self), f, indent=2)
 
     @classmethod
-    def load(cls, path: str) -> "ExperimentConfig":
+    def load(cls, path: str) -> ExperimentConfig:
         """
         Load config from a JSON file.
 

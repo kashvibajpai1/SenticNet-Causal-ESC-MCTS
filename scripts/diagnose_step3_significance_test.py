@@ -24,9 +24,9 @@ import random
 import time
 
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
 from scipy.stats import binomtest
+from torch import nn
 
 from data import encoder_adapter, iter_jsonl
 from esc.action import ESCAction
@@ -132,7 +132,7 @@ def main() -> None:
     backbone.load()
     encoder = encoder_adapter(backbone)
 
-    D_H, D_C = ESCState.D_H, ESCState.D_C
+    D_C = ESCState.D_C
     K, N_C = ESCState.K_HISTORY_WINDOW, ESCState.N_C
 
     select_vecs, whole_window_vecs = [], []
